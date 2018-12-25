@@ -30,47 +30,53 @@ var p2;
 var centro;
 var iabool;
 var aumentoVel;
+var wait;
+var timeSaved;
+var invervalID;
+var incrementoVel = 0.2;
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 800;
+        this.canvas.height = 600;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 10);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+}
 
 function startGame() {
+	timeSaved = new Date().getTime() / 1000
+	wait = true;
+	invervalID = setInterval(stopWaiting, 5000);
+	myGameArea.start();
 	iabool = false;
 	p1 = 0;
 	p2 = 0;
 	aumentoVel = 0;
-    jugador1 = new component(15, 60, "red", 10, 120);
-	jugador2 = new component(15, 60, "blue", 999, 120);
-	pelInitPosX = 510;
-	pelInitPosY = 394;
-	pelInitVelX = 10;
-	pelInitVelY = -10;
+    jugador1 = new component(15, 60, "red", 10, myGameArea.canvas.height/2-60);
+	jugador2 = new component(15, 60, "blue", myGameArea.canvas.width-10-15, myGameArea.canvas.height/2-60);
+	pelInitPosX = myGameArea.canvas.width/2 - 2.5;
+	pelInitPosY = myGameArea.canvas.height/2 - 20;
+	pelInitVelX = 5;
+	pelInitVelY = 0;
 	pelMaxVelX = 10;
 	pelMaxVelY = 20;
 	pelota = new component(10, 10, "green", pelInitPosX, pelInitPosY);
 	pelota.speedX = pelInitVelX;
 	pelota.speedY = pelInitVelY;
-	contadorj1 = new component("30px", "Consolas", "black", 428, 40, "text");
+	contadorj1 = new component("30px", "Consolas", "black", myGameArea.canvas.width/2-20-30, 40, "text");
 	contadorj1.text = "" + p1;
-	contadorj2 = new component("30px", "Consolas", "black", 582, 40, "text");
+	contadorj2 = new component("30px", "Consolas", "black", myGameArea.canvas.width/2+20, 40, "text");
 	contadorj2.text = "" + p2;
-	centro = new component(5, 768, "black", 512, 0);
-    //myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+	centro = new component(5, 768, "black", myGameArea.canvas.width/2, 0);
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
-    myGameArea.start();
-}
-
-var myGameArea = {
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = 1024;
-        this.canvas.height = 768;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 30);
-        },
-    clear : function() {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    }
 }
 
 function component(width, height, color, x, y, type) {
@@ -103,17 +109,20 @@ function component(width, height, color, x, y, type) {
 		this.hitTop();
     }
     this.hitBottom = function() {
+		
         var rockbottom = myGameArea.canvas.height - this.height;
-        if (this.y > rockbottom) {
+        if (this.y >= rockbottom) {
             this.y = rockbottom;
-            this.speedY = -(this.speedY);
+			return true;
         }
+		return false;
     }
 	this.hitTop = function() {
         if (this.y <= 0) {
             this.y = 0;
-            this.speedY = -(this.speedY);
+			return true;
         }
+		return false;
     }
 	this.hitLeft = function() {
         return this.x <= 0;
@@ -143,6 +152,11 @@ function iaMueve() {
 	jugador1.y = (pelota.y - pelota.height) - jugador1.height/2;
 }
 
+function stopWaiting() {
+	clearInterval(invervalID);
+	wait = false;
+}
+
 //Se ejecuta cada frame
 function updateGameArea() {
 	if (iabool) {
@@ -153,15 +167,28 @@ function updateGameArea() {
 	//Collisiones
 	if (jugador1.crashWith(pelota)) {
 		pelota.speedX = 10 + aumentoVel;
-		aumentoVel += 1;
-		var newvely = ((pelota.y - pelota.height/2) - (jugador1.y - jugador1.height/2) - (pelota.height + jugador1.height)) / 80 * 20;
+		aumentoVel += incrementoVel;
+		var centropelota = pelota.y + pelota.height/2;
+		var centrojugador = jugador1.y + jugador1.height/2;
+		var maxdiff = pelota.height + jugador1.height/2;
+		var newvely = (centropelota - centrojugador) / 3;
 		pelota.speedY = newvely;
 	}
 	else if (jugador2.crashWith(pelota)) {
 		pelota.speedX = -10 - aumentoVel;
-		aumentoVel += 1;
-		var newvely = ((pelota.y - pelota.height/2) - (jugador2.y - jugador2.height/2) - (pelota.height + jugador1.height)) / 80 * 20;
+		aumentoVel += incrementoVel;
+		var centropelota = pelota.y + pelota.height/2;
+		var centrojugador = jugador2.y + jugador2.height/2;
+		var maxdiff = pelota.height + jugador2.height/2;
+		var newvely = (centropelota - centrojugador) / 3;
 		pelota.speedY = newvely;
+	}
+	
+	if (pelota.hitTop()) {
+		pelota.speedY = -pelota.speedY;
+	}
+	else if (pelota.hitBottom()) {
+		pelota.speedY = -pelota.speedY;
 	}
 	
 	if (pelota.hitLeft()) { //Punto del jugador 2 (derecho)
@@ -169,9 +196,10 @@ function updateGameArea() {
 		contadorj2.text = "" + p2;
 		pelota.x = pelInitPosX;
 		pelota.y = pelInitPosY;
-		pelota.speedX = pelInitVelX;
-		pelota.speedY = pelInitVelY;
+		pelota.speedX = -pelInitVelX;
 		aumentoVel = 0;
+		wait = true;
+		invervalID = setInterval(stopWaiting, 5000);
 	}
 	else if (pelota.hitRight()) { //Punto del jugador 2 (derecho)
 		p1++;
@@ -179,8 +207,9 @@ function updateGameArea() {
 		pelota.x = pelInitPosX;
 		pelota.y = pelInitPosY;
 		pelota.speedX = pelInitVelX;
-		pelota.speedY = pelInitVelY;
 		aumentoVel = 0;
+		wait = true;
+		invervalID = setInterval(stopWaiting, 5000);
 	}
 	
 	myGameArea.clear();
@@ -189,13 +218,16 @@ function updateGameArea() {
 	jugador1.update();
 	jugador2.newPos();
 	jugador2.update();
-	pelota.newPos();
+	if (!wait) {
+		pelota.newPos();
+	}
 	pelota.update();
 	contadorj1.update();
 	contadorj2.update();
 	centro.update();
 	
 	//Comprobar victoria
+	
 	if (p1 >= 11) {
 		alert("Ha ganado el jugador 1!");
 		location.reload(); 
@@ -218,7 +250,9 @@ function keyDownHandler(event) {
 		case '(': //DOWN
 			jugador2.speedY = 10;
 			break;
-			
+	}
+	
+	switch(keyChar) {
 		case 'Q': //UP
 			jugador1.speedY = -10;
 			break;
@@ -241,13 +275,15 @@ function keyUpHandler(event) {
 		case '(': //DOWN
 			jugador2.speedY = 0;
 			break;
-			
+	}
+	
+	switch(keyChar) {
 		case 'Q': //UP
-			jugador2.speedY = 0;
+			jugador1.speedY = 0;
 			break;
 		
 		case 'A': //DOWN
-			jugador2.speedY = 0;
+			jugador1.speedY = 0;
 			break;
 	}
 	
