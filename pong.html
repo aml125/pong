@@ -31,9 +31,10 @@ var centro;
 var iabool;
 var aumentoVel;
 var wait;
-var timeSaved;
 var invervalID;
 var incrementoVel = 0.2;
+var totalMotionObjects = 5;
+var distanciaBlur = 0.5;
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -43,7 +44,7 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 10);
+        this.interval = setInterval(updateGameArea, 16);
         },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -51,7 +52,6 @@ var myGameArea = {
 }
 
 function startGame() {
-	timeSaved = new Date().getTime() / 1000
 	wait = true;
 	invervalID = setInterval(stopWaiting, 5000);
 	myGameArea.start();
@@ -70,6 +70,7 @@ function startGame() {
 	pelota = new component(10, 10, "green", pelInitPosX, pelInitPosY);
 	pelota.speedX = pelInitVelX;
 	pelota.speedY = pelInitVelY;
+	pelota.blurActivated = false;
 	contadorj1 = new component("30px", "Consolas", "black", myGameArea.canvas.width/2-20-30, 40, "text");
 	contadorj1.text = "" + p1;
 	contadorj2 = new component("30px", "Consolas", "black", myGameArea.canvas.width/2+20, 40, "text");
@@ -88,6 +89,7 @@ function component(width, height, color, x, y, type) {
     this.speedY = 0;    
     this.x = x;
     this.y = y;
+	this.blurActivated = true;
     this.gravity = 0;
     this.gravitySpeed = 0;
     this.update = function() {
@@ -97,8 +99,51 @@ function component(width, height, color, x, y, type) {
             ctx.fillStyle = color;
             ctx.fillText(this.text, this.x, this.y);
         } else {
+			ctx.globalAlpha = 1;
             ctx.fillStyle = color;
             ctx.fillRect(this.x, this.y, this.width, this.height);
+			
+			//MOTION BLUR
+			if (this.blurActivated == true) {
+				if (this.speedX > 0) {
+					dirx = 1;
+				}
+				else {
+					dirx = -1;
+				}
+				if (this.speedY > 0) {
+					diry = 1;
+				}
+				else {
+					diry = -1;
+				}
+				
+				posx = this.x - distanciaBlur * dirx;
+				posy = this.y - distanciaBlur * diry;
+				
+				ctx.globalAlpha = 0.1;
+				ctx.fillStyle = color;
+				ctx.fillRect(posx, posy, this.width, this.height);
+				
+				/*movx = this.speedX / totalMotionObjects;
+				movy = this.speedY / totalMotionObjects;
+				movAlpha = 1 / totalMotionObjects;
+				alphaValue = 1;
+				xValue = this.x;
+				yValue = this.y;
+				
+				for (var i = 0; i < totalMotionObjects; i++)
+				{
+					ctx.globalAlpha = alphaValue;
+					ctx.fillStyle = color;
+					ctx.fillRect(xValue, yValue, this.width, this.height);
+					
+					//Update position and alphaValue
+					alphaValue -= movAlpha;
+					xValue -= movx;
+					yValue -= movy;
+				}*/
+			}
         }
     }
     this.newPos = function() {
@@ -155,6 +200,7 @@ function iaMueve() {
 function stopWaiting() {
 	clearInterval(invervalID);
 	wait = false;
+	pelota.blurActivated = true;
 }
 
 //Se ejecuta cada frame
@@ -209,6 +255,7 @@ function updateGameArea() {
 		pelota.speedX = pelInitVelX;
 		aumentoVel = 0;
 		wait = true;
+		pelota.blurActivated = false;
 		invervalID = setInterval(stopWaiting, 5000);
 	}
 	
@@ -220,6 +267,9 @@ function updateGameArea() {
 	jugador2.update();
 	if (!wait) {
 		pelota.newPos();
+	}
+	else {
+		pelota.blurActivated = false;
 	}
 	pelota.update();
 	contadorj1.update();
