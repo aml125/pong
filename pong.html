@@ -25,10 +25,10 @@ var contadorj1;
 var contadorj2;
 var pelInitPosX;
 var pelInitPosY;
-var pelInitVelX;
-var pelInitVelY;
-var pelMaxVelX;
-var pelMaxVelY;
+var pelInitVelX = 3;
+var pelInitVelY = 0;
+var pelMaxVelX = 10;
+var pelMaxVelY = 20;
 var p1;
 var p2;
 var centro;
@@ -168,10 +168,6 @@ function startGame() {
 	jugador2 = new component(15, 60, "blue", jugador2InitPosX, jugador2InitPosY);
 	pelInitPosX = myGameArea.canvas.width/2 - 2.5;
 	pelInitPosY = myGameArea.canvas.height/2 - 20;
-	pelInitVelX = 5;
-	pelInitVelY = 0;
-	pelMaxVelX = 10;
-	pelMaxVelY = 20;
 	pelota = new component(10, 10, "green", pelInitPosX, pelInitPosY);
 	pelota.speedX = pelInitVelX;
 	pelota.speedY = pelInitVelY;
@@ -341,20 +337,20 @@ function stopWaiting() {
 function puntoJugador(jugador) {
 	if (multibool == false || jugador != numJugador) {
 		pelota.x = pelInitPosX;
-		pelota.y = pelInitPosY;
-		pelota.speedX = -pelInitVelX;
 		aumentoVel = 0;
 	}
 	switch (jugador) {
 		case 1:
 			p1++;
 			contadorj1.text = "" + p1;
+			pelota.speedX = pelInitVelX;
 			esperar();
 		break;
 
 		case 2:
 			p2++;
 			contadorj2.text = "" + p2;
+			pelota.speedX = -pelInitVelX;
 			esperar();
 			break;
 	}
@@ -363,7 +359,7 @@ function puntoJugador(jugador) {
 function golpeaJugador(jugador) {
 	switch(jugador) {
 		case 1:
-			pelota.speedX = 10 + aumentoVel;
+			pelota.speedX = pelInitVelX + aumentoVel;
 			aumentoVel += incrementoVel;
 			var centropelota = pelota.y + pelota.height/2;
 			var centrojugador = jugador1.y + jugador1.height/2;
@@ -372,7 +368,7 @@ function golpeaJugador(jugador) {
 			pelota.speedY = newvely;
 			break;
 		case 2:
-			pelota.speedX = -10 - aumentoVel;
+			pelota.speedX = -1 * pelInitVelX - aumentoVel;
 			aumentoVel += incrementoVel;
 			var centropelota = pelota.y + pelota.height/2;
 			var centrojugador = jugador2.y + jugador2.height/2;
