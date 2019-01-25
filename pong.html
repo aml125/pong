@@ -14,6 +14,10 @@ canvas {
 <body onload="startGame()">
 <script>
 
+var jugador2InitPosX;
+var jugador2InitPosY;
+var jugador1InitPosX;
+var jugador1InitPosY;
 var jugador1;
 var jugador2;
 var pelota;
@@ -36,6 +40,10 @@ var incrementoVel = 0.2;
 var totalMotionObjects = 5;
 var distanciaBlur = 0.5;
 
+//multiplayer variables
+var multibool = false;
+var numJugador = 0;
+
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
@@ -51,16 +59,113 @@ var myGameArea = {
     }
 }
 
-function startGame() {
+//WEBSOCKETS
+var input = document.getElementById("input");
+var output = document.getElementById("output");
+var socket = new WebSocket("ws://" + location.hostname + ":8080/connect");
+
+socket.onopen = function () {
+	alert("Status: Conectado con el servidor. Pulsa listo para jugar multijugador.\n");
+};
+
+//Mensajes recibidos del servidor
+socket.onmessage = function (e) {
+	var spl = e.data.split(" ");
+	var tipo = spl[0]
+	switch(tipo) {
+		case "nuevojuego":
+			// alert("El juego ha comenzado.");
+			numJugador = parseInt(spl[1]);
+			document.getElementById("texto").innerHTML = "Jugando multijugadort. Eres el jugador " + numJugador;
+			newMultiplayerGame();
+			break;
+		case "sincJugador":
+			if (numJugador == 1) {
+				jugador2.x = parseInt(spl[1]);
+				jugador2.y = parseInt(spl[2]);
+				jugador2.speedX = parseInt(spl[3]);
+				jugador2.speedY = parseInt(spl[4]);
+			}
+			else {
+				jugador1.x = parseInt(spl[1]);
+				jugador1.y = parseInt(spl[2]);
+				jugador1.speedX = parseInt(spl[3]);
+				jugador1.speedY = partseInt(spl[4]);
+			}
+			break;
+		case "devuelta":
+			var otrojugador = 0;
+			if (numJugador == 1) {
+				otrojugador = 2;
+			}
+			else {
+				otrojugador = 1;
+			}
+			pelota.x = parseInt(spl[1]);
+			pelota.y = parseInt(spl[2]);
+			pelota.speedX = parseInt(spl[3]);
+			pelota.speedY = parseInt(spl[4]);
+			golpeaJugador(otrojugador);
+			// alert("Mierda devuelta");
+			break;
+		case "perdida":
+			pelota.x = parseInt(spl[1]);
+			pelota.y = parseInt(spl[2]);
+			pelota.speedX = parseInt(spl[3]);
+			pelota.speedY = parseInt(spl[4]);
+			puntoJugador(numJugador);
+			// alert("Mierda perdida");
+			break;
+		default:
+			alert("Mensaje del servidor: ", e.data);
+	}
+};
+
+function connect() {
+	socket.send("connect");
+}
+
+function send(s) {
+	socket.send(s);
+}
+
+//Bola perdida
+function sendPerdida() {
+	socket.send("perdida " + numJugador + " " + pelota.x + " " + pelota.y + " " + pelota.speedX + " " + pelota.speedY)
+}
+
+//Bola devuelta
+function devuelta() {
+	socket.send("devuelta " + numJugador + " " + pelota.x + " " + pelota.y + " " + pelota.speedX + " " + pelota.speedY)
+}
+
+function sincronizar() {
+	if (numJugador == 1) {
+		socket.send("sincJugador " + numJugador + " " + jugador1.x + " " + jugador1.y + " " + jugador1.speedX + " " + jugador1.speedY);
+	} else {
+		socket.send("sincJugador " + numJugador + " " + jugador2.x + " " + jugador2.y + " " + jugador2.speedX + " " + jugador2.speedY);
+	}
+}
+//------------------------------
+
+function esperar() {
 	wait = true;
 	invervalID = setInterval(stopWaiting, 5000);
+	//pelota.blurActivated = false;
+}
+
+function startGame() {
 	myGameArea.start();
 	iabool = false;
 	p1 = 0;
 	p2 = 0;
 	aumentoVel = 0;
-    jugador1 = new component(15, 60, "red", 10, myGameArea.canvas.height/2-60);
-	jugador2 = new component(15, 60, "blue", myGameArea.canvas.width-10-15, myGameArea.canvas.height/2-60);
+	jugador1InitPosX = 10;
+	jugador1InitPosY = myGameArea.canvas.height/2-60;
+	jugador2InitPosX = myGameArea.canvas.width-10-15;
+	jugador2InitPosY = myGameArea.canvas.height/2-60;
+    jugador1 = new component(15, 60, "red", jugador1InitPosX, jugador1InitPosY);
+	jugador2 = new component(15, 60, "blue", jugador2InitPosX, jugador2InitPosY);
 	pelInitPosX = myGameArea.canvas.width/2 - 2.5;
 	pelInitPosY = myGameArea.canvas.height/2 - 20;
 	pelInitVelX = 5;
@@ -78,6 +183,31 @@ function startGame() {
 	centro = new component(5, 768, "black", myGameArea.canvas.width/2, 0);
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
+	newGame();
+}
+
+function newGame() {
+	p1 = 0;
+	p2 = 0;
+	aumentoVel = 0;
+	pelota.speedX = pelInitVelX;
+	pelota.speedY = pelInitVelY;
+	pelota.x = pelInitPosX;
+	pelota.y = pelInitPosY;
+	pelota.blurActivated = false;
+	jugador1.x = jugador1InitPosX;
+	jugador1.y = jugador1InitPosY;
+	jugador2.x = jugador2InitPosX;
+	jugador2.y = jugador2InitPosY;
+	contadorj1.text = "" + p1;
+	contadorj2.text = "" + p2;
+	esperar();
+}
+
+function newMultiplayerGame() {
+	var sinide = setInterval(sincronizar, 20);
+	multibool = true;
+	newGame();
 }
 
 function component(width, height, color, x, y, type) {
@@ -193,14 +323,65 @@ function component(width, height, color, x, y, type) {
     }
 }
 
+function sendData() {
+	
+}
+
 function iaMueve() {
 	jugador1.y = (pelota.y - pelota.height) - jugador1.height/2;
 }
 
 function stopWaiting() {
+	//devuelta();
 	clearInterval(invervalID);
 	wait = false;
 	pelota.blurActivated = true;
+}
+
+function puntoJugador(jugador) {
+	if (multibool == false || jugador != numJugador) {
+		pelota.x = pelInitPosX;
+		pelota.y = pelInitPosY;
+		pelota.speedX = -pelInitVelX;
+		aumentoVel = 0;
+	}
+	switch (jugador) {
+		case 1:
+			p1++;
+			contadorj1.text = "" + p1;
+			esperar();
+		break;
+
+		case 2:
+			p2++;
+			contadorj2.text = "" + p2;
+			esperar();
+			break;
+	}
+}
+
+function golpeaJugador(jugador) {
+	switch(jugador) {
+		case 1:
+			pelota.speedX = 10 + aumentoVel;
+			aumentoVel += incrementoVel;
+			var centropelota = pelota.y + pelota.height/2;
+			var centrojugador = jugador1.y + jugador1.height/2;
+			var maxdiff = pelota.height + jugador1.height/2;
+			var newvely = (centropelota - centrojugador) / 3;
+			pelota.speedY = newvely;
+			break;
+		case 2:
+			pelota.speedX = -10 - aumentoVel;
+			aumentoVel += incrementoVel;
+			var centropelota = pelota.y + pelota.height/2;
+			var centrojugador = jugador2.y + jugador2.height/2;
+			var maxdiff = pelota.height + jugador2.height/2;
+			var newvely = (centropelota - centrojugador) / 3;
+			pelota.speedY = newvely;
+			break;
+	}
+	
 }
 
 //Se ejecuta cada frame
@@ -211,23 +392,17 @@ function updateGameArea() {
 	
 	
 	//Collisiones
-	if (jugador1.crashWith(pelota)) {
-		pelota.speedX = 10 + aumentoVel;
-		aumentoVel += incrementoVel;
-		var centropelota = pelota.y + pelota.height/2;
-		var centrojugador = jugador1.y + jugador1.height/2;
-		var maxdiff = pelota.height + jugador1.height/2;
-		var newvely = (centropelota - centrojugador) / 3;
-		pelota.speedY = newvely;
+	if (jugador1.crashWith(pelota) && ((multibool == true && numJugador == 1) || multibool == false)) {
+		golpeaJugador(1);
+		if (multibool == true) {
+			devuelta();
+		}
 	}
-	else if (jugador2.crashWith(pelota)) {
-		pelota.speedX = -10 - aumentoVel;
-		aumentoVel += incrementoVel;
-		var centropelota = pelota.y + pelota.height/2;
-		var centrojugador = jugador2.y + jugador2.height/2;
-		var maxdiff = pelota.height + jugador2.height/2;
-		var newvely = (centropelota - centrojugador) / 3;
-		pelota.speedY = newvely;
+	else if (jugador2.crashWith(pelota) && ((multibool == true && numJugador == 2) || multibool == false)) {
+		golpeaJugador(2);
+		if (multibool == true) {
+			devuelta();
+		}
 	}
 	
 	if (pelota.hitTop()) {
@@ -238,25 +413,24 @@ function updateGameArea() {
 	}
 	
 	if (pelota.hitLeft()) { //Punto del jugador 2 (derecho)
-		p2++;
-		contadorj2.text = "" + p2;
-		pelota.x = pelInitPosX;
-		pelota.y = pelInitPosY;
-		pelota.speedX = -pelInitVelX;
-		aumentoVel = 0;
-		wait = true;
-		invervalID = setInterval(stopWaiting, 5000);
+		if (multibool == false) {
+			puntoJugador(2);
+		}
+
+		if (multibool == true && numJugador == 1) {
+			puntoJugador(2);
+			sendPerdida();
+		}
 	}
-	else if (pelota.hitRight()) { //Punto del jugador 2 (derecho)
-		p1++;
-		contadorj1.text = "" + p1;
-		pelota.x = pelInitPosX;
-		pelota.y = pelInitPosY;
-		pelota.speedX = pelInitVelX;
-		aumentoVel = 0;
-		wait = true;
-		pelota.blurActivated = false;
-		invervalID = setInterval(stopWaiting, 5000);
+	else if (pelota.hitRight()) { //Punto del jugador 1 (izquierdo)
+		if (multibool == false) {
+			puntoJugador(1);
+		}
+
+		if (multibool == true && numJugador == 2) {
+			puntoJugador(1);
+			sendPerdida();
+		}
 	}
 	
 	myGameArea.clear();
@@ -280,11 +454,11 @@ function updateGameArea() {
 	
 	if (p1 >= 11) {
 		alert("Ha ganado el jugador 1!");
-		location.reload(); 
+		newGame();
 	}
 	else if (p2 >= 11) {
 		alert("Ha ganado el jugador 2!");
-		location.reload(); 
+		newGame();
 	}
 }
 
@@ -292,24 +466,28 @@ function keyDownHandler(event) {
 	var keyUnicode = event.keyCode;                // Get the Unicode value
 	var keyChar = String.fromCharCode(keyUnicode);       // Convert the value into a character
 	
-	switch(keyChar) {
-		case '&': //UP
-			jugador2.speedY = -10;
-			break;
-		
-		case '(': //DOWN
-			jugador2.speedY = 10;
-			break;
+	if (multibool == false || numJugador == 2) {
+		switch(keyChar) {
+				case '&': //UP
+					jugador2.speedY = -10;
+					break;
+				
+				case '(': //DOWN
+					jugador2.speedY = 10;
+					break;
+		}
 	}
 	
-	switch(keyChar) {
-		case 'Q': //UP
-			jugador1.speedY = -10;
-			break;
-		
-		case 'A': //DOWN
-			jugador1.speedY = 10;
-			break;
+	if (multibool == false || numJugador == 1) {
+		switch(keyChar) {
+			case 'Q': //UP
+				jugador1.speedY = -10;
+				break;
+			
+			case 'A': //DOWN
+				jugador1.speedY = 10;
+				break;
+		}
 	}
 }
 
@@ -345,5 +523,7 @@ function iaButton() {
 
 </script>
 	<button onclick="iaButton()">Activar IA</button>
+	<button onclick="connect()">Listo</button>
+	<p id="texto">Pong offline</p>
 </body>
 </html>
