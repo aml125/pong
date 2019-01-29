@@ -39,6 +39,10 @@ var invervalID;
 var incrementoVel = 0.2;
 var totalMotionObjects = 5;
 var distanciaBlur = 0.5;
+var posicionTouch = -1;
+var touchEnabled = false;
+var isTouching = false;
+var touchSpeed = 30;
 
 //multiplayer variables
 var multibool = false;
@@ -47,8 +51,8 @@ var numJugador = 0;
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 800;
-        this.canvas.height = 600;
+        this.canvas.width = 400;
+        this.canvas.height = 300;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
@@ -154,6 +158,7 @@ function esperar() {
 	//pelota.blurActivated = false;
 }
 
+//Función de inicializacion
 function startGame() {
 	myGameArea.start();
 	iabool = false;
@@ -179,6 +184,10 @@ function startGame() {
 	centro = new component(5, 768, "black", myGameArea.canvas.width/2, 0);
 	document.addEventListener("keydown", keyDownHandler, false);
 	document.addEventListener("keyup", keyUpHandler, false);
+	myGameArea.canvas.addEventListener("touchstart", handleMove);
+	myGameArea.canvas.addEventListener("touchmove", handleMove);
+	myGameArea.canvas.addEventListener("touchend", handleEnd);
+	myGameArea.canvas.addEventListener("touchcancel", handleEnd);
 	newGame();
 }
 
@@ -431,6 +440,38 @@ function updateGameArea() {
 	
 	myGameArea.clear();
     myGameArea.frameNo += 1;
+
+	if (touchEnabled) {
+		var direccion = 1;
+		var diferencia = jugador1.y - jugador1.height / 2 - posicionTouch;
+		if (diferencia >= 0) {
+			direccion = -1;
+		}
+		var distanceLeft = Math.abs(diferencia);
+		if (multibool == true && numJugador == 1) {
+			//Mueve jugador 1
+			if (distanceLeft <= touchSpeed) {
+				jugador1.speedY = 0;
+				jugador1.y = posicionTouch - jugador1.height / 2;
+				touchEnabled = false;
+			}
+			else {
+				jugador1.speedY = touchSpeed * direccion;
+			}
+		}
+		else {
+			//Mueve jugador 2
+			if (distanceLeft <= touchSpeed) {
+				jugador2.speedY = 0;
+				jugador2.y = posicionTouch - jugador1.height / 2;
+				touchEnabled = false;
+			}
+			else {
+				jugador2.speedY = touchSpeed * direccion;
+			}
+		}
+	}
+
 	jugador1.newPos();
 	jugador1.update();
 	jugador2.newPos();
@@ -458,6 +499,9 @@ function updateGameArea() {
 	}
 }
 
+
+
+//Keys and touch events
 function keyDownHandler(event) {
 	var keyUnicode = event.keyCode;                // Get the Unicode value
 	var keyChar = String.fromCharCode(keyUnicode);       // Convert the value into a character
@@ -511,6 +555,19 @@ function keyUpHandler(event) {
 			break;
 	}
 	
+}
+
+function handleMove(e) {
+	if(e.touches) {
+		touchEnabled = true;
+		isTouching = true;
+        posicionTouch = e.touches[0].pageY - myGameArea.canvas.offsetTop - jugador2.height / 2;
+        e.preventDefault();
+    }
+}
+
+function handleEnd(e) {
+	isTouching = false;
 }
 
 function iaButton() {
