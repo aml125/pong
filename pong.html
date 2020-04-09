@@ -42,7 +42,7 @@ var distanciaBlur = 0.5;
 var posicionTouch = -1;
 var touchEnabled = false;
 var isTouching = false;
-var touchSpeed = 15;
+var touchSpeed = 10;
 
 //multiplayer variables
 var multibool = false;
@@ -80,7 +80,8 @@ socket.onmessage = function (e) {
 		case "nuevojuego":
 			// alert("El juego ha comenzado.");
 			numJugador = parseInt(spl[1]);
-			document.getElementById("texto").innerHTML = "Jugando multijugadort. Eres el jugador " + numJugador;
+			document.getElementById("texto").innerHTML = "Jugando multijugador. Eres el jugador " + numJugador;
+			document.getElementById("info").innerHTML = "La partida ha comenzado"
 			newMultiplayerGame();
 			break;
 		case "sincJugador":
@@ -127,6 +128,7 @@ socket.onmessage = function (e) {
 
 function connect() {
 	socket.send("connect");
+	document.getElementById("info").innerHTML = "Conectado: Esperando jugador"
 }
 
 function send(s) {
@@ -584,7 +586,6 @@ function handleMove(e) {
 		touchEnabled = true;
 		isTouching = true;
         posicionTouch = e.touches[0].pageY;// - myGameArea.canvas.offsetTop - jugador2.height / 2;
-		document.getElementById("info").innerHTML = ""+posicionTouch;
         e.preventDefault();
     }
 }
@@ -602,6 +603,6 @@ function iaButton() {
 	<button onclick="connect()">Listo</button>
 	<p id="texto">Pong offline</p>
 	</br>
-	<p id="info">touch y</p>
+	<p id="info">Informacion</p>
 </body>
 </html>

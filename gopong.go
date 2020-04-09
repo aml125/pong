@@ -28,6 +28,8 @@ func main() {
 		conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 		var exit bool = false
 		var partidaActual partida
+		var nueva bool = false
+		var conectado bool = false
 		totalJugadores++
 		fmt.Println("Jugador conectado. Total: ", totalJugadores)
 
@@ -44,13 +46,17 @@ func main() {
 			tipoMensaje := spl[0]
 			switch string(tipoMensaje) {
 			case "connect":
+				if conectado == true {
+					continue
+				}
+				conectado = true
 				fmt.Printf("%s recieved: %s\n", conn.RemoteAddr(), string(msg))
-				var nueva bool = false
 				if totalListos == 0 {
 					nuevaPartida.j1 = conn
 				} else {
 					nuevaPartida.j2 = conn
-					partidaActual = nuevaPartida
+					partidaActual.j1 = nuevaPartida.j1
+					partidaActual.j2 = nuevaPartida.j2
 					totalListos = -1
 					nueva = true
 				}
@@ -71,6 +77,13 @@ func main() {
 				break
 
 			case "sincJugador":
+				if nueva == false {
+					partidaActual.j1 = nuevaPartida.j1
+					partidaActual.j2 = nuevaPartida.j2
+					nuevaPartida.j1 = nil
+					nuevaPartida.j2 = nil
+					nueva = true
+				}
 				if spl[1] == "1" {
 					if err = partidaActual.j2.WriteMessage(msgType, []byte("sincJugador "+spl[2]+" "+spl[3]+" "+spl[4]+" "+spl[5])); err != nil {
 						fmt.Printf("ERROR: Al enviare mensaje al jugador: " + err.Error())
