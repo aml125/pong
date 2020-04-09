@@ -573,6 +573,7 @@ function handleMove(e) {
 		touchEnabled = true;
 		isTouching = true;
         posicionTouch = e.touches[0].pageY;// - myGameArea.canvas.offsetTop - jugador2.height / 2;
+		document.getElementById("info").innerHTML = ""+posicionTouch;
         e.preventDefault();
     }
 }
@@ -589,5 +590,7 @@ function iaButton() {
 	<button onclick="iaButton()">Activar IA</button>
 	<button onclick="connect()">Listo</button>
 	<p id="texto">Pong offline</p>
+	</br>
+	<p id="info">touch y</p>
 </body>
 </html>
