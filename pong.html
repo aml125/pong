@@ -448,10 +448,21 @@ function updateGameArea() {
 
 	if (touchEnabled) {
 		var direccion = 1;
-		var diferencia = jugador1.y - jugador1.height / 2 - posicionTouch;
-		if (diferencia >= 0) {
-			direccion = -1;
+		var diferencia = 0;
+
+		if (numJugador == 1) {
+			diferencia = jugador1.y - jugador1.height / 2 - posicionTouch;
+			if (diferencia >= 0) {
+				direccion = -1;
+			}
 		}
+		else {
+			diferencia = jugador2.y - jugador2.height / 2 - posicionTouch;
+			if (diferencia >= 0) {
+				direccion = -1;
+			}
+		}
+		
 		var distanceLeft = Math.abs(diferencia);
 		if (multibool == true && numJugador == 1) {
 			//Mueve jugador 1
