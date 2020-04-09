@@ -42,7 +42,7 @@ var distanciaBlur = 0.5;
 var posicionTouch = -1;
 var touchEnabled = false;
 var isTouching = false;
-var touchSpeed = 30;
+var touchSpeed = 15;
 
 //multiplayer variables
 var multibool = false;
@@ -462,7 +462,7 @@ function updateGameArea() {
 				direccion = -1;
 			}
 		}
-		
+
 		var distanceLeft = Math.abs(diferencia);
 		if (multibool == true && numJugador == 1) {
 			//Mueve jugador 1
