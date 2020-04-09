@@ -66,7 +66,7 @@ var myGameArea = {
 //WEBSOCKETS
 var input = document.getElementById("input");
 var output = document.getElementById("output");
-var socket = new WebSocket("ws://" + location.hostname + ":8080/connect");
+var socket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/connect");
 
 socket.onopen = function () {
 	alert("Status: Conectado con el servidor. Pulsa listo para jugar multijugador.\n");
@@ -131,6 +131,11 @@ function connect() {
 
 function send(s) {
 	socket.send(s);
+}
+
+//Fin del juego
+function sendEndGame() {
+	socket.send("endgame");
 }
 
 //Bola perdida
@@ -210,7 +215,7 @@ function newGame() {
 }
 
 function newMultiplayerGame() {
-	var sinide = setInterval(sincronizar, 20);
+	var sinide = setInterval(sincronizar, 5);
 	multibool = true;
 	newGame();
 }
@@ -491,10 +496,16 @@ function updateGameArea() {
 	
 	if (p1 >= 11) {
 		alert("Ha ganado el jugador 1!");
+		if (multibool == true) {
+			sendEndGame();
+		}
 		newGame();
 	}
 	else if (p2 >= 11) {
 		alert("Ha ganado el jugador 2!");
+		if (multibool == true) {
+			sendEndGame();
+		}
 		newGame();
 	}
 }

@@ -14,6 +14,7 @@ var upgrader = websocket.Upgrader{
 }
 var totalJugadores int = 0
 var totalListos int = 0
+var exit bool = false
 var conexionj1 *websocket.Conn
 var conexionj2 *websocket.Conn
 
@@ -23,13 +24,14 @@ func main() {
 		conn, _ := upgrader.Upgrade(w, r, nil) // error ignored for sake of simplicity
 		if totalJugadores <= 0 {
 			conexionj1 = conn
-		} else {
+			exit = false
+		} else if totalJugadores == 1 {
 			conexionj2 = conn
 		}
 		totalJugadores++
 		fmt.Println("Jugador conectado. Total: ", totalJugadores)
 
-		for {
+		for exit == false {
 			// Read message from browser
 			msgType, msg, err := conn.ReadMessage()
 			if err != nil {
@@ -95,6 +97,14 @@ func main() {
 					}
 				}
 				break
+			case "endgame":
+				fmt.Println("Fin del juego");
+				totalListos=0;
+				totalJugadores=0;
+				conexionj1 = nil;
+				conexionj2 = nil;
+				exit = true;
+				break;
 			default:
 				fmt.Println("Error en el servidor. Mensaje incontrolado: " + string(msg))
 			}
@@ -106,5 +116,5 @@ func main() {
 		http.ServeFile(w, r, "pong.html")
 	})
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":2020", nil)
 }
