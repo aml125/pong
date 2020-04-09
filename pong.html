@@ -572,7 +572,7 @@ function handleMove(e) {
 	if(e.touches) {
 		touchEnabled = true;
 		isTouching = true;
-        posicionTouch = e.touches[0].pageY - myGameArea.canvas.offsetTop - jugador2.height / 2;
+        posicionTouch = e.touches[0].pageY;// - myGameArea.canvas.offsetTop - jugador2.height / 2;
         e.preventDefault();
     }
 }
