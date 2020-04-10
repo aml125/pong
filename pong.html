@@ -504,11 +504,11 @@ function updateGameArea() {
 	jugador2.update();
 	if (!wait) {
 		pelota.newPos();
+		pelota.update();
 	}
 	else {
 		pelota.blurActivated = false;
 	}
-	pelota.update();
 	contadorj1.update();
 	contadorj2.update();
 	centro.update();
