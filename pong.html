@@ -351,15 +351,16 @@ function stopWaiting() {
 }
 
 function puntoJugador(jugador) {
+	aumentoVel = 0;
 	if (multibool == false || jugador != numJugador) {
 		pelota.x = pelInitPosX;
-		aumentoVel = 0;
 	}
 	switch (jugador) {
 		case 1:
 			p1++;
 			contadorj1.text = "" + p1;
 			pelota.speedX = pelInitVelX;
+			pelota.speedY = pelInitVelY;
 			esperar();
 		break;
 
@@ -367,6 +368,7 @@ function puntoJugador(jugador) {
 			p2++;
 			contadorj2.text = "" + p2;
 			pelota.speedX = -pelInitVelX;
+			pelInitVelY = pelInitVelY;
 			esperar();
 			break;
 	}
