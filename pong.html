@@ -227,8 +227,8 @@ function component(width, height, color, x, y, type) {
     this.score = 0;
     this.width = width;
     this.height = height;
-    this.speedX = 0;
-    this.speedY = 0;    
+    this.speedX = 0.0;
+    this.speedY = 0.0;    
     this.x = x;
     this.y = y;
 	this.blurActivated = true;
@@ -376,26 +376,27 @@ function puntoJugador(jugador) {
 }
 
 function golpeaJugador(jugador) {
-	switch(jugador) {
-		case 1:
-			pelota.speedX = pelInitVelX + aumentoVel;
-			aumentoVel += incrementoVel;
-			var centropelota = pelota.y + pelota.height/2;
-			var centrojugador = jugador1.y + jugador1.height/2;
-			var maxdiff = pelota.height + jugador1.height/2;
-			var newvely = (centropelota - centrojugador) / 3;
-			pelota.speedY = newvely;
-			break;
-		case 2:
-			pelota.speedX = -1 * pelInitVelX - aumentoVel;
-			aumentoVel += incrementoVel;
-			var centropelota = pelota.y + pelota.height/2;
-			var centrojugador = jugador2.y + jugador2.height/2;
-			var maxdiff = pelota.height + jugador2.height/2;
-			var newvely = (centropelota - centrojugador) / 3;
-			pelota.speedY = newvely;
-			break;
+	if (jugador == numJugador) {
+		switch(jugador) {
+			case 1:
+				pelota.speedX = pelInitVelX + aumentoVel;
+				var centropelota = pelota.y + pelota.height/2;
+				var centrojugador = jugador1.y + jugador1.height/2;
+				var maxdiff = pelota.height + jugador1.height/2;
+				var newvely = (centropelota - centrojugador) / 3;
+				pelota.speedY = newvely;
+				break;
+			case 2:
+				pelota.speedX = -1 * pelInitVelX - aumentoVel;
+				var centropelota = pelota.y + pelota.height/2;
+				var centrojugador = jugador2.y + jugador2.height/2;
+				var maxdiff = pelota.height + jugador2.height/2;
+				var newvely = (centropelota - centrojugador) / 3;
+				pelota.speedY = newvely;
+				break;
+		}
 	}
+	aumentoVel += incrementoVel;
 	
 }
 
