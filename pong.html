@@ -219,6 +219,8 @@ function newGame() {
 function newMultiplayerGame() {
 	var sinide = setInterval(sincronizar, 20);
 	multibool = true;
+	iabool = false;
+	document.getElementById("ia").disabled = true;
 	newGame();
 }
 
@@ -605,7 +607,7 @@ function iaButton() {
 }
 
 </script>
-	<button onclick="iaButton()">Activar IA</button>
+	<button id="ia" onclick="iaButton()">Activar IA</button>
 	<button onclick="connect()">Listo</button>
 	<p id="texto">Pong offline</p>
 	</br>
