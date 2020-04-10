@@ -161,8 +161,8 @@ function sincronizar() {
 
 function esperar() {
 	wait = true;
-	invervalID = setInterval(stopWaiting, 5000);
-	document.getElementById("info").innerHTML = "Esperando";
+	setTimeout(function() { stopWaiting(); }, 5000);
+	// document.getElementById("info").innerHTML = "Esperando";
 	//pelota.blurActivated = false;
 }
 
@@ -347,11 +347,9 @@ function iaMueve() {
 }
 
 function stopWaiting() {
-	//devuelta();
-	clearInterval(invervalID);
 	wait = false;
 	pelota.blurActivated = true;
-	document.getElementById("info").innerHTML = "Fin espera";
+	// document.getElementById("info").innerHTML = "Fin espera";
 }
 
 function puntoJugador(jugador) {
@@ -506,11 +504,11 @@ function updateGameArea() {
 	jugador2.update();
 	if (!wait) {
 		pelota.newPos();
-		pelota.update();
 	}
 	else {
 		pelota.blurActivated = false;
 	}
+	pelota.update();
 	contadorj1.update();
 	contadorj2.update();
 	centro.update();
