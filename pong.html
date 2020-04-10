@@ -142,7 +142,7 @@ function sendEndGame() {
 
 //Bola perdida
 function sendPerdida() {
-	socket.send("perdida "); //+ numJugador + " " + pelota.x + " " + pelota.y + " " + pelota.speedX + " " + pelota.speedY)
+	socket.send("perdida " + numJugador); //+ " " + pelota.x + " " + pelota.y + " " + pelota.speedX + " " + pelota.speedY)
 }
 
 //Bola devuelta
