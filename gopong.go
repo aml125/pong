@@ -97,12 +97,21 @@ func main() {
 
 			case "perdida":
 				fmt.Printf("%s recieved: %s\n", conn.RemoteAddr(), string(msg))
+				// if spl[1] == "1" {
+				// 	if err = partidaActual.j2.WriteMessage(msgType, []byte("perdida "+spl[2]+" "+spl[3]+" "+spl[4]+" "+spl[5])); err != nil {
+				// 		fmt.Printf("ERROR: Al enviare mensaje al jugador: " + err.Error())
+				// 	}
+				// } else {
+				// 	if err = partidaActual.j1.WriteMessage(msgType, []byte("perdida "+spl[2]+" "+spl[3]+" "+spl[4]+" "+spl[5])); err != nil {
+				// 		fmt.Printf("ERROR: Al enviare mensaje al jugador: " + err.Error())
+				// 	}
+				// }
 				if spl[1] == "1" {
-					if err = partidaActual.j2.WriteMessage(msgType, []byte("perdida "+spl[2]+" "+spl[3]+" "+spl[4]+" "+spl[5])); err != nil {
+					if err = partidaActual.j2.WriteMessage(msgType, []byte("perdida")); err != nil {
 						fmt.Printf("ERROR: Al enviare mensaje al jugador: " + err.Error())
 					}
 				} else {
-					if err = partidaActual.j1.WriteMessage(msgType, []byte("perdida "+spl[2]+" "+spl[3]+" "+spl[4]+" "+spl[5])); err != nil {
+					if err = partidaActual.j1.WriteMessage(msgType, []byte("perdida")); err != nil {
 						fmt.Printf("ERROR: Al enviare mensaje al jugador: " + err.Error())
 					}
 				}

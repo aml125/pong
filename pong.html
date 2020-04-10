@@ -114,10 +114,10 @@ socket.onmessage = function (e) {
 			// alert("Mierda devuelta");
 			break;
 		case "perdida":
-			pelota.x = parseInt(spl[1]);
-			pelota.y = parseInt(spl[2]);
-			pelota.speedX = parseInt(spl[3]);
-			pelota.speedY = parseInt(spl[4]);
+			// pelota.x = parseInt(spl[1]);
+			// pelota.y = parseInt(spl[2]);
+			// pelota.speedX = parseInt(spl[3]);
+			// pelota.speedY = parseInt(spl[4]);
 			puntoJugador(numJugador);
 			// alert("Mierda perdida");
 			break;
@@ -142,7 +142,7 @@ function sendEndGame() {
 
 //Bola perdida
 function sendPerdida() {
-	socket.send("perdida " + numJugador + " " + pelota.x + " " + pelota.y + " " + pelota.speedX + " " + pelota.speedY)
+	socket.send("perdida "); //+ numJugador + " " + pelota.x + " " + pelota.y + " " + pelota.speedX + " " + pelota.speedY)
 }
 
 //Bola devuelta
@@ -432,8 +432,8 @@ function updateGameArea() {
 		}
 
 		if (multibool == true && numJugador == 1) {
-			puntoJugador(2);
 			sendPerdida();
+			puntoJugador(2);
 		}
 	}
 	else if (pelota.hitRight()) { //Punto del jugador 1 (izquierdo)
@@ -442,8 +442,9 @@ function updateGameArea() {
 		}
 
 		if (multibool == true && numJugador == 2) {
-			puntoJugador(1);
 			sendPerdida();
+			puntoJugador(1);
+			
 		}
 	}
 	
