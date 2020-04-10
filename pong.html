@@ -377,7 +377,7 @@ function puntoJugador(jugador) {
 }
 
 function golpeaJugador(jugador) {
-	if (multibool && jugador == numJugador) {
+	if (multibool == false || jugador == numJugador) {
 		switch(jugador) {
 			case 1:
 				pelota.speedX = pelInitVelX + aumentoVel;
