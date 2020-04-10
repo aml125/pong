@@ -162,6 +162,7 @@ function sincronizar() {
 function esperar() {
 	wait = true;
 	invervalID = setInterval(stopWaiting, 5000);
+	document.getElementById("info").innerHTML = "Esperando";
 	//pelota.blurActivated = false;
 }
 
@@ -350,6 +351,7 @@ function stopWaiting() {
 	clearInterval(invervalID);
 	wait = false;
 	pelota.blurActivated = true;
+	document.getElementById("info").innerHTML = "Esperando";
 }
 
 function puntoJugador(jugador) {
