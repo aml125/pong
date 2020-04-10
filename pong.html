@@ -353,6 +353,7 @@ function stopWaiting() {
 function puntoJugador(jugador) {
 	aumentoVel = 0;
 	pelota.x = pelInitPosX;
+	pelota.y = pelInitPosY;
 	// if (multibool == false || jugador != numJugador) {
 		
 	// }
@@ -376,7 +377,7 @@ function puntoJugador(jugador) {
 }
 
 function golpeaJugador(jugador) {
-	if (jugador == numJugador) {
+	if (multibool && jugador == numJugador) {
 		switch(jugador) {
 			case 1:
 				pelota.speedX = pelInitVelX + aumentoVel;
