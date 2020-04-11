@@ -201,6 +201,7 @@ function startGame() {
 	myGameArea.canvas.addEventListener("touchmove", handleMove);
 	myGameArea.canvas.addEventListener("touchend", handleEnd);
 	myGameArea.canvas.addEventListener("touchcancel", handleEnd);
+	myGameArea.canvas.addEventListener('dblclick', myGameArea.canvas.requestFullscreen);
 	newGame();
 }
 
