@@ -622,7 +622,7 @@ function fullscreen(){
  
 	try {
 		if (elem.requestFullscreen) {
-			elem.requestFullscreen();
+			prom = elem.requestFullscreen();
 		} else if (elem.mozRequestFullScreen) { /* Firefox */
 			elem.mozRequestFullScreen();
 		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
