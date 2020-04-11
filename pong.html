@@ -169,7 +169,7 @@ function esperar() {
 }
 
 function addFullScreenIframe() {
-	document.getElementsByTagName("iframe")[0].setAttribute("allow", "fullscreen");
+	window.parent.setAttribute("allow", "fullscreen");
 }
 
 //Función de inicializacion
