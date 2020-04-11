@@ -14,6 +14,8 @@ canvas {
 <body onload="startGame()">
 <script>
 
+var iaSpeed = 8;
+var playerSpeed = 10;
 var jugador2InitPosX;
 var jugador2InitPosY;
 var jugador1InitPosX;
@@ -42,7 +44,7 @@ var distanciaBlur = 0.5;
 var posicionTouch = -1;
 var touchEnabled = false;
 var isTouching = false;
-var touchSpeed = 10;
+var touchSpeed = playerSpeed;
 
 //multiplayer variables
 var multibool = false;
@@ -343,7 +345,13 @@ function sendData() {
 }
 
 function iaMueve() {
-	jugador1.y = (pelota.y - pelota.height) - jugador1.height/2;
+	diff = (pelota.y + pelota.height/2) - (jugador1.y + jugador1.height/2);
+	absDiff = Math.abs(diff);
+	iaSpeed = document.getElementById('dificultad').value;
+	if (absDiff >= iaSpeed) {
+		direccion = Math.sign(diff);
+		jugador1.y += direccion * iaSpeed;
+	}
 }
 
 function stopWaiting() {
@@ -478,7 +486,7 @@ function updateGameArea() {
 			//Mueve jugador 1
 			if (distanceLeft <= touchSpeed) {
 				jugador1.speedY = 0;
-				jugador1.y = posicionTouch - jugador1.height / 2;
+				// jugador1.y = posicionTouch - jugador1.height / 2;
 				touchEnabled = false;
 			}
 			else {
@@ -489,7 +497,7 @@ function updateGameArea() {
 			//Mueve jugador 2
 			if (distanceLeft <= touchSpeed) {
 				jugador2.speedY = 0;
-				jugador2.y = posicionTouch - jugador1.height / 2;
+				// jugador2.y = posicionTouch - jugador1.height / 2;
 				touchEnabled = false;
 			}
 			else {
@@ -607,7 +615,14 @@ function iaButton() {
 }
 
 </script>
+    </br>
 	<button id="ia" onclick="iaButton()">Activar IA</button>
+	<select id="dificultad">
+		<option value="6">Facil</option>
+		<option selected="true" value="8">Normal</option>
+		<option value="9">Dificil</option>
+		<option value="20">Perfecta</option>
+	</select>
 	<button onclick="connect()">Listo</button>
 	<p id="texto">Pong offline</p>
 	</br>
