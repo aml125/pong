@@ -618,14 +618,17 @@ function iaButton() {
 }
 
 function fullscreen(){
-	var el = myGameArea.canvas;
+	var elem = myGameArea.canvas;
  
-	if(el.webkitRequestFullscreen) {
-		el.webkitRequestFullscreen();
-	}
-	else {
-		el.mozRequestFullScreen();
-	}            
+	if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) { /* Firefox */
+    elem.mozRequestFullScreen();
+  } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) { /* IE/Edge */
+    elem.msRequestFullscreen();
+  }         
 }
 
 function isMobileDevice() {
