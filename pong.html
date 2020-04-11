@@ -617,24 +617,24 @@ function iaButton() {
 	iabool = !iabool;
 }
 
-function fullscreen(){
-	var elem = myGameArea.canvas;
+// function fullscreen(){
+// 	var elem = myGameArea.canvas;
  
-	try {
-		if (elem.requestFullscreen) {
-			prom = elem.requestFullscreen();
-		} else if (elem.mozRequestFullScreen) { /* Firefox */
-			elem.mozRequestFullScreen();
-		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-			elem.webkitRequestFullscreen();
-		} else if (elem.msRequestFullscreen) { /* IE/Edge */
-			elem.msRequestFullscreen();
-		}         
-	}
-	catch (error) {
-		console.error(error);
-	}
-}
+// 	try {
+// 		if (elem.requestFullscreen) {
+// 			prom = elem.requestFullscreen();
+// 		} else if (elem.mozRequestFullScreen) { /* Firefox */
+// 			elem.mozRequestFullScreen();
+// 		} else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+// 			elem.webkitRequestFullscreen();
+// 		} else if (elem.msRequestFullscreen) { /* IE/Edge */
+// 			elem.msRequestFullscreen();
+// 		}         
+// 	}
+// 	catch (error) {
+// 		console.error(error);
+// 	}
+// }
 
 function isMobileDevice() {
     return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
@@ -650,7 +650,7 @@ function isMobileDevice() {
 		<option value="20">Perfecta</option>
 	</select>
 	<button onclick="connect()">Listo</button>
-	<button onclick="fullscreen()">Pantalla completa</button>
+	<button onclick="myGameArea.canvas.requestFullscreen()">Pantalla completa</button>
 	<p id="texto">Pong offline</p>
 	</br>
 	<p id="info">Usa las flechas o Q y A para jugar. En móbiles desliza tu dedo.</p>
