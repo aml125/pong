@@ -469,13 +469,13 @@ function updateGameArea() {
 		var diferencia = 0;
 
 		if (numJugador == 1) {
-			diferencia = jugador1.y - jugador1.height / 2 - posicionTouch;
+			diferencia = jugador1.y + jugador1.height / 2 - posicionTouch;
 			if (diferencia >= 0) {
 				direccion = -1;
 			}
 		}
 		else {
-			diferencia = jugador2.y - jugador2.height / 2 - posicionTouch;
+			diferencia = jugador2.y + jugador2.height / 2 - posicionTouch;
 			if (diferencia >= 0) {
 				direccion = -1;
 			}
