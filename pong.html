@@ -168,11 +168,16 @@ function esperar() {
 	//pelota.blurActivated = false;
 }
 
+function addFullScreenIframe() {
+	document.getElementsByTagName("iframe").setProperty("allow", "fullscreen");
+}
+
 //Función de inicializacion
 function startGame() {
 	if (isMobileDevice()) {
 		iaBool = true;
 	}
+	addFullScreenIframe();
 	myGameArea.start();
 	iabool = false;
 	p1 = 0;
