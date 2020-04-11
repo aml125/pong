@@ -170,6 +170,9 @@ function esperar() {
 
 //Función de inicializacion
 function startGame() {
+	if (isMobileDevice()) {
+		fullscreen();
+	}
 	myGameArea.start();
 	iabool = false;
 	p1 = 0;
@@ -614,6 +617,21 @@ function iaButton() {
 	iabool = !iabool;
 }
 
+function fullscreen(){
+           var el = myGameArea.canvas;
+ 
+           if(el.webkitRequestFullScreen) {
+               el.webkitRequestFullScreen();
+           }
+          else {
+             el.mozRequestFullScreen();
+          }            
+}
+
+function isMobileDevice() {
+    return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+};
+
 </script>
     </br>
 	<button id="ia" onclick="iaButton()">Activar IA</button>
@@ -624,6 +642,7 @@ function iaButton() {
 		<option value="20">Perfecta</option>
 	</select>
 	<button onclick="connect()">Listo</button>
+	<button onclick="fullscreen()">Pantalla completa</button>
 	<p id="texto">Pong offline</p>
 	</br>
 	<p id="info">Usa las flechas o Q y A para jugar. En móbiles desliza tu dedo.</p>
