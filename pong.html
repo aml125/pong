@@ -50,6 +50,7 @@ var ping = 0;
 var pingStartTime;
 var framerateMiliseconds = 16 / frameMultiplier;
 var retardFrames = 0;
+var waitForRetard = false;
 
 //multiplayer variables
 var multibool = false;
@@ -127,6 +128,7 @@ socket.onmessage = function (e) {
 		case "perdida":
 			otherPing = parseInt(spl[1]);
 			retardFrames = (ping/2 + otherPing/2) / (framerateMiliseconds);
+			waitForRetard=true;
 			puntoJugador(numJugador);
 			break;
 		case "ping":
@@ -184,7 +186,13 @@ function sincronizar() {
 
 function esperar() {
 	wait = true;
-	setTimeout(function() { stopWaiting(); }, 5000 - retardFrames * framerateMiliseconds);
+	if (waitForRetard) {
+		setTimeout(function() { stopWaiting(); }, 5000 - retardFrames * framerateMiliseconds);
+		waitForRetard = false;
+	}
+	else {
+		setTimeout(function() { stopWaiting(); }, 5000);
+	}
 }
 
 //Función de inicializacion
