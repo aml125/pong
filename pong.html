@@ -14,8 +14,9 @@ canvas {
 <body onload="startGame()">
 <script>
 
-var iaSpeed = 8;
-var playerSpeed = 10;
+var frameMultiplier = 2;
+var iaSpeed = 8 / frameMultiplier;
+var playerSpeed = 10 / frameMultiplier;
 var jugador2InitPosX;
 var jugador2InitPosY;
 var jugador1InitPosX;
@@ -27,10 +28,10 @@ var contadorj1;
 var contadorj2;
 var pelInitPosX;
 var pelInitPosY;
-var pelInitVelX = 3;
-var pelInitVelY = 0;
-var pelMaxVelX = 10;
-var pelMaxVelY = 20;
+var pelInitVelX = 3 / frameMultiplier;
+var pelInitVelY = 0 / frameMultiplier;
+var pelMaxVelX = 10 / frameMultiplier;
+var pelMaxVelY = 20 / frameMultiplier;
 var p1;
 var p2;
 var centro;
@@ -38,7 +39,7 @@ var iabool;
 var aumentoVel;
 var wait;
 var invervalID;
-var incrementoVel = 0.2;
+var incrementoVel = 0.2 / frameMultiplier;
 var totalMotionObjects = 5;
 var distanciaBlur = 0.5;
 var posicionTouch = -1;
@@ -58,7 +59,8 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-        this.interval = setInterval(updateGameArea, 16);
+		framerate = 16 / frameMultiplier;
+        this.interval = setInterval(updateGameArea, framerate);
         },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -168,16 +170,11 @@ function esperar() {
 	//pelota.blurActivated = false;
 }
 
-function addFullScreenIframe() {
-	window.parent.setAttribute("allow", "fullscreen");
-}
-
 //Función de inicializacion
 function startGame() {
 	if (isMobileDevice()) {
 		iaBool = true;
 	}
-	// addFullScreenIframe();
 	myGameArea.start();
 	iabool = false;
 	p1 = 0;
@@ -403,7 +400,7 @@ function golpeaJugador(jugador) {
 				var centropelota = pelota.y + pelota.height/2;
 				var centrojugador = jugador1.y + jugador1.height/2;
 				var maxdiff = pelota.height + jugador1.height/2;
-				var newvely = (centropelota - centrojugador) / 3;
+				var newvely = ((centropelota - centrojugador) / 3) / frameMultiplier;
 				pelota.speedY = newvely;
 				break;
 			case 2:
@@ -411,7 +408,7 @@ function golpeaJugador(jugador) {
 				var centropelota = pelota.y + pelota.height/2;
 				var centrojugador = jugador2.y + jugador2.height/2;
 				var maxdiff = pelota.height + jugador2.height/2;
-				var newvely = (centropelota - centrojugador) / 3;
+				var newvely = ((centropelota - centrojugador) / 3) / frameMultiplier;
 				pelota.speedY = newvely;
 				break;
 		}
@@ -558,11 +555,11 @@ function keyDownHandler(event) {
 	if (multibool == false || numJugador == 2) {
 		switch(keyChar) {
 				case '&': //UP
-					jugador2.speedY = -10;
+					jugador2.speedY = -playerSpeed;
 					break;
 				
 				case '(': //DOWN
-					jugador2.speedY = 10;
+					jugador2.speedY = playerSpeed;
 					break;
 		}
 	}
@@ -570,11 +567,11 @@ function keyDownHandler(event) {
 	if (multibool == false || numJugador == 1) {
 		switch(keyChar) {
 			case 'Q': //UP
-				jugador1.speedY = -10;
+				jugador1.speedY = -playerSpeed;
 				break;
 			
 			case 'A': //DOWN
-				jugador1.speedY = 10;
+				jugador1.speedY = playerSpeed;
 				break;
 		}
 	}

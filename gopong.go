@@ -148,7 +148,7 @@ func main() {
 	})
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "redirect.html")
+		http.ServeFile(w, r, "pong.html")
 	})
 
 	http.HandleFunc("/juego", func(w http.ResponseWriter, r *http.Request) {
