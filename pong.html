@@ -48,6 +48,8 @@ var isTouching = false;
 var touchSpeed = playerSpeed;
 var ping = 0;
 var pingStartTime;
+var framerateMiliseconds = 16 / frameMultiplier;
+var retardFrames = 0;
 
 //multiplayer variables
 var multibool = false;
@@ -61,8 +63,7 @@ var myGameArea = {
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
-		framerate = 16 / frameMultiplier;
-        this.interval = setInterval(updateGameArea, framerate);
+        this.interval = setInterval(updateGameArea, framerateMiliseconds);
         },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -91,20 +92,25 @@ socket.onmessage = function (e) {
 			newMultiplayerGame();
 			break;
 		case "sincJugador":
+			otherPing = parseInt(spl[5]);
+			retardFrames = (ping/2 + otherPing/2) / (framerateMiliseconds);
 			if (numJugador == 1) {
-				jugador2.x = parseFloat(spl[1]);
-				jugador2.y = parseFloat(spl[2]);
 				jugador2.speedX = parseFloat(spl[3]);
 				jugador2.speedY = parseFloat(spl[4]);
+				jugador2.x = parseFloat(spl[1]) + jugador2.speedX * retardFrames;
+				jugador2.y = parseFloat(spl[2]) + jugador2.speedY * retardFrames;
+				
 			}
 			else {
-				jugador1.x = parseFloat(spl[1]);
-				jugador1.y = parseFloat(spl[2]);
 				jugador1.speedX = parseFloat(spl[3]);
 				jugador1.speedY = parseFloat(spl[4]);
+				jugador1.x = parseFloat(spl[1]) + jugador1.speedX * retardFrames;
+				jugador1.y = parseFloat(spl[2]) + jugador1.speedY * retardFrames;
 			}
 			break;
 		case "devuelta":
+			otherPing = parseInt(spl[5]);
+			retardFrames = (ping/2 + otherPing/2) / (framerateMiliseconds);
 			var otrojugador = 0;
 			if (numJugador == 1) {
 				otrojugador = 2;
@@ -112,20 +118,16 @@ socket.onmessage = function (e) {
 			else {
 				otrojugador = 1;
 			}
-			pelota.x = parseFloat(spl[1]);
-			pelota.y = parseFloat(spl[2]);
 			pelota.speedX = parseFloat(spl[3]);
 			pelota.speedY = parseFloat(spl[4]);
+			pelota.x = parseFloat(spl[1]) + pelota.speedX * retardFrames;
+			pelota.y = parseFloat(spl[2]) + pelota.speedY * retardFrames;
 			golpeaJugador(otrojugador);
-			// alert("Mierda devuelta");
 			break;
 		case "perdida":
-			// pelota.x = parseInt(spl[1]);
-			// pelota.y = parseInt(spl[2]);
-			// pelota.speedX = parseInt(spl[3]);
-			// pelota.speedY = parseInt(spl[4]);
+			otherPing = parseInt(spl[1]);
+			retardFrames = (ping/2 + otherPing/2) / (framerateMiliseconds);
 			puntoJugador(numJugador);
-			// alert("Mierda perdida");
 			break;
 		case "ping":
 			ping = new Date().getTime() - pingStartTime;
@@ -182,9 +184,7 @@ function sincronizar() {
 
 function esperar() {
 	wait = true;
-	setTimeout(function() { stopWaiting(); }, 5000);
-	// document.getElementById("info").innerHTML = "Esperando";
-	//pelota.blurActivated = false;
+	setTimeout(function() { stopWaiting(); }, 5000 - retardFrames*framerateMiliseconds);
 }
 
 //Función de inicializacion
@@ -376,12 +376,6 @@ function iaMueve() {
 		direccion = Math.sign(diff);
 		jugador1.y += direccion * iaSpeed;
 	}
-}
-
-function stopWaiting() {
-	wait = false;
-	pelota.blurActivated = true;
-	// document.getElementById("info").innerHTML = "Fin espera";
 }
 
 function puntoJugador(jugador) {
