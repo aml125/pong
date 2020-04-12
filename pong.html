@@ -184,7 +184,7 @@ function sincronizar() {
 
 function esperar() {
 	wait = true;
-	setTimeout(function() { stopWaiting(); }, 5000 - retardFrames*framerateMiliseconds);
+	setTimeout(function() { stopWaiting(); }, 5000 - retardFrames * framerateMiliseconds);
 }
 
 //Función de inicializacion
@@ -376,6 +376,11 @@ function iaMueve() {
 		direccion = Math.sign(diff);
 		jugador1.y += direccion * iaSpeed;
 	}
+}
+
+function stopWaiting() {
+	wait = false;
+	pelota.blurActivated = true;
 }
 
 function puntoJugador(jugador) {
