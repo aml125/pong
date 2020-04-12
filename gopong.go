@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gorilla/websocket"
@@ -14,8 +15,10 @@ var upgrader = websocket.Upgrader{
 }
 
 type partida struct {
-	j1 *websocket.Conn
-	j2 *websocket.Conn
+	j1     *websocket.Conn
+	j2     *websocket.Conn
+	pingj1 int
+	pingj2 int
 }
 
 var totalJugadores int = 0
@@ -139,6 +142,19 @@ func main() {
 			case "endgame":
 				fmt.Println("Fin del juego")
 				exit = true
+				break
+			case "ping":
+				if err = conn.WriteMessage(msgType, []byte("ping")); err != nil {
+					fmt.Printf("ERROR: Al enviare mensaje al jugador: " + err.Error())
+					return
+				}
+				break
+			case "setPing":
+				if spl[1] == "1" {
+					partidaActual.pingj1, _ = strconv.Atoi(spl[2])
+				} else if spl[1] == "2" {
+					partidaActual.pingj2, _ = strconv.Atoi(spl[2])
+				}
 				break
 			default:
 				fmt.Println("Error en el servidor. Mensaje incontrolado: " + string(msg))

@@ -14,7 +14,7 @@ canvas {
 <body onload="startGame()">
 <script>
 
-var frameMultiplier = 2;
+var frameMultiplier = 1.4;
 var iaSpeed = 8 / frameMultiplier;
 var playerSpeed = 10 / frameMultiplier;
 var jugador2InitPosX;
@@ -46,6 +46,8 @@ var posicionTouch = -1;
 var touchEnabled = false;
 var isTouching = false;
 var touchSpeed = playerSpeed;
+var ping = 0;
+var pingStartTime;
 
 //multiplayer variables
 var multibool = false;
@@ -125,10 +127,25 @@ socket.onmessage = function (e) {
 			puntoJugador(numJugador);
 			// alert("Mierda perdida");
 			break;
+		case "ping":
+			ping = new Date().getTime() - pingStartTime;
+			document.getElementById("pingInfo").innerHTML = "Ping: " +  ping + "ms";
+			setPing();
+			break;
 		default:
 			alert("Mensaje del servidor: ", e.data);
 	}
 };
+
+function checkPing() {
+	auxdate = new Date();
+	pingStartTime = auxdate.getTime();
+	socket.send("ping " + numJugador);
+}
+
+function setPing() {
+	socket.send("setPing " + numJugador + " " + ping);
+}
 
 function connect() {
 	socket.send("connect");
@@ -175,6 +192,7 @@ function startGame() {
 	if (isMobileDevice()) {
 		iaBool = true;
 	}
+	setInterval(checkPing, 1000);
 	myGameArea.start();
 	iabool = false;
 	p1 = 0;
@@ -655,7 +673,7 @@ function isMobileDevice() {
 	<button onclick="connect()">Listo</button>
 	<button onclick="fullscreen()">Pantalla completa</button>
 	<p id="texto">Pong offline</p>
-	</br>
 	<p id="info">Usa las flechas o Q y A para jugar. En móbiles desliza tu dedo.</p>
+	<p id="pingInfo">Ping: </p>
 </body>
 </html>
