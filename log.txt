@@ -1,0 +1,49 @@
+Jugador conectado. Total:  1
+Jugador conectado. Total:  2
+Jugador conectado. Total:  3
+Jugador conectado. Total:  4
+Jugador conectado. Total:  5
+Jugador conectado. Total:  6
+Jugador conectado. Total:  7
+Jugador conectado. Total:  8
+Jugador conectado. Total:  9
+Jugador conectado. Total:  10
+Jugador conectado. Total:  11
+Jugador conectado. Total:  12
+84.120.21.121:2499 recieved: connect
+Jugador listo, total  1
+Jugador conectado. Total:  13
+84.120.21.121:2554 recieved: connect
+Jugador listo, total  0
+Iniciando el juego
+ERROR: Al enviare mensaje al jugador: websocket: close sentJugador conectado. Total:  14
+Jugador conectado. Total:  15
+84.120.21.121:3270 recieved: connect
+Jugador listo, total  1
+Jugador conectado. Total:  16
+84.120.21.121:3274 recieved: connect
+Jugador listo, total  0
+Iniciando el juego
+ERROR: Al enviare mensaje al jugador: websocket: close sentJugador conectado. Total:  17
+84.120.21.121:3275 recieved: connect
+Jugador listo, total  1
+Jugador conectado. Total:  18
+84.120.21.121:3284 recieved: connect
+Jugador listo, total  0
+Iniciando el juego
+ERROR: Al enviare mensaje al jugador: websocket: close sentJugador conectado. Total:  19
+Jugador conectado. Total:  20
+84.120.21.121:4122 recieved: connect
+Jugador listo, total  1
+Jugador conectado. Total:  21
+84.120.21.121:4123 recieved: connect
+Jugador listo, total  0
+Iniciando el juego
+ERROR: Al enviare mensaje al jugador: websocket: close sentJugador conectado. Total:  22
+84.120.21.121:4124 recieved: connect
+Jugador listo, total  1
+Jugador conectado. Total:  23
+84.120.21.121:4125 recieved: connect
+Jugador listo, total  0
+Iniciando el juego
+ERROR: Al enviare mensaje al jugador: websocket: close sentJugador conectado. Total:  24
